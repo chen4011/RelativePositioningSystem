@@ -1,0 +1,37 @@
+'!TITLE "MPU6050 Test"
+'''
+' Rotation along specific axis to verify the yaw, pitch, and roll data measured from MPU6050 
+'''
+
+Sub Main
+	TakeArm Keep = 0
+
+    Dim init As Joint
+    ExtSpeed 30
+
+	init = J(0, 42.44, 110.89, 0, 26, 0)
+'    init = J(0, , , 0, 26, 90)
+'    init = CurJnt
+    Move P, init
+    Delay 5000
+
+    Call Rotation(6, 90)
+    Call Rotation(5, 90)
+    Drive(6, 90)
+    Call Rotation(5, 45)
+
+End Sub
+
+Sub Rotation(jt As Integer, angle As Integer)
+    
+    Dim index As Integer
+
+    For index = 0 To 2 Step 1
+        If index Mod 2 = 0 Then
+            Drive(jt, angle)
+        Else
+            Drive(jt, -2*angle)
+        End If
+        Delay 2000
+    Next
+End Sub

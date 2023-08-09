@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ESP32 OTA Upload Firmware</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+
+    <body>
+        <h2>ESP32 OTA Upload Firmware</h2>
+
+        <form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm">
+        <!-- <form method="POST" onsubmit="return processFormData(event)" enctype="multipart/form-data" id="uploadForm"> -->
+            <label>Firmware file(.bin) <input type="file" name="update" id="firmware" accept=".bin" required></label>
+    
+            <br/>
+            <br/>
+            <input type="submit" value="Upload">
+            <button type="button" class="button" onclick="window.location.href='/'">Home</button>
+            
+        </form>
+
+        <p>Progress: <progress id="prg" max="100" value="0"></progress></span></p>
+        
+        <!-- <script type = "text/javascript" src = "js/uploadFirmware.js"></script> -->
+        <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+        <script>
+            $('form').submit(function(e){
+                e.preventDefault();
+                var form = $('#uploadForm')[0];
+                var data = new FormData(form);
+                $.ajax({
+                    url: '/upload',
+                    type: 'POST',
+                    data: data,
+                    contentType: false,
+                    processData:false,
+                    xhr: function() {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function(evt) {
+                            if (evt.lengthComputable) {
+                                var per = Math.round(evt.loaded / evt.total * 100);
+                                $('#prg').val(per);
+                                // if(per == 100) {
+                                //     if(confirm('Firmware upload success. Reload the page?') == true){
+                                //         window.location.reload();
+                                //     }
+                                // }
+                            }
+                        }, false);
+                        return xhr;
+                    },
+                    success:function(d, s) { },
+                    error: function (a, b, c) { }
+                });
+            });
+        </script>
+    </body>
+</html>
+

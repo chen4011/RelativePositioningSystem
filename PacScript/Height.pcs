@@ -1,0 +1,49 @@
+'!TITLE "Height"
+'''
+' Move to the different height along the Z axis of RX
+'''
+
+Sub Main 
+	' Get the control of arm and initialize(Speed 100, Accel 100, Decel 100, Tool0, Work0)
+	TakeArm Keep = 0
+	
+	' Parameter setting
+	Dim toolCoord As Integer = 5
+	Dim workCoord As Integer = 5
+	Dim x As Double
+	Dim y As Double
+	Dim z As Double
+	Dim pos As Position
+	Dim init As Position
+	' Dim dl As Integer
+	
+	' Change the external speed to 50%
+	' The actual speed under auto mode is Speed*ExtSpeed; (Speed*ExtSpeed*10%) in teach mode
+	Speed 10
+	ExtSpeed 100
+	
+	' Change the tool and work coordinate
+	ChangeTool toolCoord
+	ChangeWork workCoord
+	
+	' Move to initial position
+	init = P( 0, 0, 160, 0, 0, 0 )
+	Move L, init
+	
+	' Wiat for user press the start record button
+	PrintDbg "Press start"
+	Delay 1000
+	
+	' Move in different height
+	Speed 100
+	For z = 60 To 150 Step 10
+		pos = P(0, 0, z, 0, 0, 0 )
+		Move L, pos, Time = 1000
+		Delay 4000
+	Next
+	
+	' Move to initial position
+	Speed 10
+	Move L, init
+	
+End Sub

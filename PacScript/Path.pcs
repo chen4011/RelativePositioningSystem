@@ -1,0 +1,69 @@
+'!TITLE "Path"
+'''
+' Move along the path in a fixed speed
+'''
+
+Sub Main 
+	' Get the control of arm and initialize(Speed 100, Accel 100, Decel 100, Tool0, Work0)
+	TakeArm Keep = 0
+	
+	' Parameter setting
+	Dim toolCoord As Integer = 5
+	Dim workCoord As Integer = 5
+	Dim space As Double = 30
+	Dim lb As Double = -60
+	Dim ub As Double = 60
+	Dim x As Double
+	Dim y As Double
+	Dim z As Double
+	Dim path As Vector
+	Dim init As Position = P( -60, -60, 70, 0, 0, 0 )
+	
+	' Change the external speed to 100%
+	' The actual speed under auto mode is Speed*ExtSpeed; (Speed*ExtSpeed*10%) in teach mode
+	Speed 10
+	ExtSpeed 100
+	
+	' Change the tool and work coordinate
+	ChangeTool toolCoord
+	ChangeWork workCoord
+	
+	' Move to initial position
+	Move L, init
+	
+	' Count down for 3 seconds
+    PrintDbg "Press start"
+    Delay 1000
+	
+	' Move in 10*10*10 cm space 
+	' Speed 100
+	Dim dis As Integer = 120
+	Dim dur As Integer = 30
+	Dim index As Integer
+    Dim speedData As Joint
+	For index = 0 To 8 Step 1
+        If index <> 1 And index Mod 2 = 1 Then
+            dis = dis - dur
+        End If
+        Select Case index Mod 4
+        Case 0
+            path = V(0, dis, 0)
+        Case 1
+            path = V(dis, 0, 0)
+        Case 2
+            path = V(0, -dis, 0)
+        Case 3
+            path = V(-dis, 0, 0)
+        End Select
+        speedData = GetSrvData(17)
+        Draw L, @P path, S = 10
+
+        PrintDbg speedData
+	Next
+
+	
+	' Move to initial position
+	Speed 10
+	Move L, init
+	
+End Sub
